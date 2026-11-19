@@ -2,7 +2,7 @@ import os
 from uuid import UUID
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from postgrest import APIError
 from supabase import Client, create_client
 
@@ -16,6 +16,11 @@ if not supabase_url or not supabase_key:
     raise RuntimeError("SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY must be set")
 
 supabase: Client = create_client(supabase_url, supabase_key)
+
+
+@app.get("/")
+def home():
+    return render_template("index.html")
 
 
 @app.get("/health")
