@@ -2,7 +2,7 @@ import os
 from uuid import UUID
 
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template_string, request
 from postgrest import APIError
 from supabase import Client, create_client
 
@@ -20,7 +20,56 @@ supabase: Client = create_client(supabase_url, supabase_key)
 
 @app.get("/")
 def home():
-    return render_template("index.html")
+    return render_template_string("""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#171327">
+  <title>Campus Events API</title>
+  <style>
+    :root { color-scheme: light; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color: #211d31; background: #f8f7fc; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 56px 24px; }
+    main { width: min(100%, 1000px); margin: 0 auto; }
+    .eyebrow { color: #6e55bd; font-size: .76rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 12px 0 10px; font-size: clamp(2rem, 5vw, 3.35rem); letter-spacing: -.055em; }
+    .intro { margin: 0 0 30px; color: #696579; line-height: 1.6; }
+    .table-wrap { overflow-x: auto; border: 1px solid #e9e5f1; border-radius: 16px; background: white; box-shadow: 0 14px 40px #2920440b; }
+    table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    th, td { padding: 18px 20px; text-align: left; border-bottom: 1px solid #eeeaf4; }
+    th { background: #eee8fb; color: #39314d; font-size: .83rem; letter-spacing: .04em; }
+    tr:last-child td { border-bottom: 0; }
+    .method { color: #6141ac; font-weight: 800; }
+    code { color: #d65e22; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .95rem; font-weight: 700; }
+    td:last-child { color: #5d596b; }
+    footer { margin-top: 20px; color: #817d8e; font-size: .85rem; }
+    footer a { color: #6141ac; text-decoration: none; font-weight: 700; }
+    footer a:hover { text-decoration: underline; }
+    @media (max-width: 600px) { body { padding: 36px 16px; } th, td { padding: 15px 14px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Campus · Developer reference</div>
+    <h1>Events API</h1>
+    <p class="intro">Browse campus events and manage event registrations with these endpoints.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td class="method">GET</td><td><code>/api/events</code></td><td>Browse events.</td></tr>
+          <tr><td class="method">GET</td><td><code>/api/events/{id}</code></td><td>Event details.</td></tr>
+          <tr><td class="method">POST</td><td><code>/api/registrations</code></td><td>Create registration, 201 or 409.</td></tr>
+          <tr><td class="method">GET</td><td><code>/api/me/registrations</code></td><td>Current user’s registrations.</td></tr>
+          <tr><td class="method">GET</td><td><code>/api/events/{id}/registrations</code></td><td>Attendee list, owning organizer only.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <footer>Service status: <a href="/health">check API health</a>.</footer>
+  </main>
+</body>
+</html>""")
 
 
 @app.get("/health")
